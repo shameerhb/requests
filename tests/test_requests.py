@@ -2182,6 +2182,17 @@ class TestRequests:
         next(it)
         assert len(list(it)) == 3
 
+    def test_response_iter_lines_decode_unicode_without_encoding(self):
+        r = requests.Response()
+        r.raw = io.BytesIO(b"line one\nline two\nline three")
+        r.encoding = None
+
+        assert list(r.iter_lines(chunk_size=5, decode_unicode=True, delimiter="\n")) == [
+            b"line one",
+            b"line two",
+            b"line three",
+        ]
+
     def test_response_context_manager(self, httpbin):
         with requests.get(httpbin("stream/4"), stream=True) as response:
             assert isinstance(response, requests.Response)

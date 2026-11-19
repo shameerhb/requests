@@ -1017,6 +1017,10 @@ class Response:
                 chunk = cast("str | bytes", pending + chunk)
 
             if delimiter:
+                if isinstance(chunk, bytes) and isinstance(delimiter, str):
+                    delimiter = delimiter.encode("utf-8")
+                elif isinstance(chunk, str) and isinstance(delimiter, bytes):
+                    delimiter = delimiter.decode("utf-8")
                 lines = chunk.split(delimiter)  # type: ignore[arg-type]
             else:
                 lines = chunk.splitlines()
